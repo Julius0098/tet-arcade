@@ -49,11 +49,23 @@
                     <span class="soundbtn__icon" id="soundIcon" aria-hidden="true">🔊</span>
                     <span class="soundbtn__label" id="soundLabel">Äänet</span>
                 </button>
+                <!-- Koko ruudun tila: näkyy vain pienillä näytöillä. -->
+                <button class="fsbtn" id="fsBtn" type="button" aria-pressed="false" title="Koko ruudun tila">
+                    <span class="fsbtn__icon" id="fsIcon" aria-hidden="true">⛶</span>
+                    <span class="fsbtn__label" id="fsLabel">Koko ruutu</span>
+                </button>
             </header>
 
             <div class="stage">
                 <canvas id="game" width="960" height="360" aria-label="Endless Runner -peli"></canvas>
                 <p class="touchhint" aria-hidden="true">Napauta hypätäksesi</p>
+
+                <!-- Pystynäytöllä kehotetaan kääntämään puhelin vaakatasoon. -->
+                <div class="rotatetip" id="rotateTip" hidden>
+                    <span class="rotatetip__icon" aria-hidden="true">📱</span>
+                    <p class="rotatetip__text">Käännä puhelin vaakatasoon</p>
+                    <p class="rotatetip__note">Peli näkyy silloin koko ruudulla</p>
+                </div>
 
                 <div class="hud">
                     <div class="hud__score">
@@ -72,7 +84,8 @@
                         <p class="overlay__title" id="overlayTitle">Peli loppui</p>
                         <p class="overlay__score" id="overlayScore">Pisteet 0</p>
                         <p class="overlay__note" id="overlayNote" hidden></p>
-                        <p class="overlay__hint">Aloita uusi peli painamalla <kbd>Enter</kbd>, <kbd>Space</kbd> tai klikkaamalla</p>
+                        <p class="overlay__hint" id="overlayHint">Aloita uusi peli painamalla <kbd>Enter</kbd>, <kbd>Space</kbd> tai klikkaamalla</p>
+                        <button class="overlay__again" id="overlayBtn" type="button">Pelaa uudelleen</button>
                     </div>
                 </div>
             </div>

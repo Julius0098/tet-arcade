@@ -139,6 +139,97 @@ body {
     border-color: var(--line-soft);
 }
 
+/* Koko ruudun -nappi: sama ilme kuin ääninapissa. */
+.fsbtn {
+    display: none;                  /* näytetään vain pienillä näytöillä */
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.fsbtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent);
+}
+
+.fsbtn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.fsbtn__icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.fsbtn[aria-pressed="true"] {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Kehotus kääntää puhelin vaakatasoon: näkyy vain pelin aikana
+   pystysuunnassa olevalle kosketusnäytölle. */
+.rotatetip {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(8, 12, 20, 0.86), rgba(8, 12, 20, 0.94));
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.rotatetip[hidden] {
+    display: none;
+}
+
+.rotatetip__icon {
+    font-size: 42px;
+    line-height: 1;
+    animation: rotate-hint 2.4s ease-in-out infinite;
+}
+
+.rotatetip__text {
+    margin: 6px 0 0;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+}
+
+.rotatetip__note {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--ink-3);
+}
+
+@keyframes rotate-hint {
+    0%, 45% { transform: rotate(0deg); }
+    55%, 100% { transform: rotate(-90deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rotatetip__icon { animation: none; }
+}
+
 /* ---------- Pelialue ---------- */
 
 .stage {
@@ -315,6 +406,38 @@ body {
 
 .overlay__note[hidden] {
     display: none;
+}
+
+/* Uudelleenpelaus-nappi loppuruudussa: kosketuslaitteilla ensisijainen. */
+.overlay__again {
+    display: none;                  /* näytetään pienillä näytöillä */
+    width: 100%;
+    min-height: 50px;
+    margin-top: 16px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 100%);
+    color: #06121f;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: filter 140ms ease, transform 140ms ease;
+}
+
+.overlay__again:hover {
+    filter: brightness(1.08);
+}
+
+.overlay__again:active {
+    transform: scale(0.985);
+}
+
+.overlay__again:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
 }
 
 /* ---------- Level-palkki pelialueen alla ---------- */
@@ -741,4 +864,175 @@ kbd {
         padding: 5px 9px;
         font-size: 12px;
     }
+}
+
+/* ============================================================
+   PUHELIMEN PELITILA
+   Kun peli on käynnissä puhelimella, kaikki valikot piilotetaan ja
+   jäljelle jää vain peli. Näin ruudusta saadaan mahdollisimman paljon
+   itse pelaamiseen.
+   ============================================================ */
+
+@media (max-width: 900px) {
+    /* Koko ruudun -nappi ja uudelleenpelaus-nappi näkyviin. */
+    .fsbtn {
+        display: inline-flex;
+    }
+
+    .overlay__again {
+        display: block;
+    }
+
+    /* Peli käynnissä: piilotetaan valikot. */
+    body.is-playing .panel,
+    body.is-playing .topbar,
+    body.is-playing .levelbar,
+    body.is-playing .backlink {
+        display: none !important;
+    }
+
+    /* Pelialue reunasta reunaan: myös aloitusruudulla, jotta peli näkyy
+       mahdollisimman isona. Sivumarginaalit ja pyöristykset pois. */
+    .stage {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        border-radius: 0;
+        /* Koko pelimaailma näkyviin: canvas sovitetaan kuvasuhde säilyttäen. */
+        display: grid;
+        place-items: center;
+    }
+
+    /* Aloitusruudulla canvas täyttää leveyden; korkeus seuraa kuvasuhdetta. */
+    .stage #game {
+        width: 100%;
+        height: auto;
+        max-height: none;
+        object-fit: contain;
+    }
+
+    body.is-playing {
+        padding: 0;
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    /* Pelin aikana pelialue peittää koko ruudun. */
+    body.is-playing .stage {
+        width: auto;
+        margin-left: 0;
+    }
+
+    /* Pelialue täyttää ruudun. Canvas saa upota reunojen yli, jotta peli
+       näkyy mahdollisimman isona: hahmo pysyy näkyvissä myös pystynäytöllä. */
+    body.is-playing .layout {
+        display: block;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        gap: 0;
+    }
+
+    body.is-playing .game-column {
+        display: block;
+    }
+
+    body.is-playing .stage {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: grid;
+        place-items: center;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: var(--canvas-bg);
+        overflow: hidden;
+    }
+
+    /* Pelin aikana pelialue peittää koko ruudun: canvas sovitetaan siihen
+       kuvasuhde säilyttäen, jolloin koko pelimaailma näkyy eikä mitään
+       tärkeää jää reunojen ulkopuolelle. */
+    body.is-playing .stage #game {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        max-height: none;
+        object-fit: contain;
+    }
+
+    /* Pisteet sovitetaan canvasin leveydelle, jotta ne eivät valu tyhjälle
+       alueelle pystynäytöllä. */
+    body.is-playing .hud {
+        left: 50%;
+        right: auto;
+        width: min(100vw, 100vh * 2.667);
+        transform: translateX(-50%);
+    }
+
+    /* Kosketusohje pois pelin päältä. */
+    body.is-playing .touchhint {
+        display: none !important;
+    }
+
+    /* Pisteet ja ennätys: luettavat koot pienelläkin ruudulla. */
+    body.is-playing .hud {
+        padding: 14px 16px;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+    }
+
+    body.is-playing .hud__score {
+        gap: 10px;
+    }
+
+    body.is-playing .hud__coins {
+        padding: 4px 10px 4px 8px;
+    }
+}
+
+/* Pystysuunnassa olevalle puhelimelle kehotetaan kääntämään laite, koska peli
+   on vaakasuuntainen. JavaScript päättää näytetäänkö kehotus (vain
+   kosketuslaitteilla); CSS huolehtii suunnasta. Kehotus on pelin päällä
+   eikä estä pelaamista. */
+@media (orientation: portrait) {
+    body.is-playing .rotatetip:not([hidden]) {
+        display: flex;
+    }
+}
+
+/* Koko ruudun tila: käytetään koko näyttö, myös loven ympäriltä. */
+body.is-fullscreen .stage {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 0;
+}
+
+body.is-fullscreen .stage #game {
+    width: 100%;
+    height: auto;
+    max-width: none;
+}
+
+body.is-fullscreen {
+    padding: 0;
+    overflow: hidden;
+}
+
+body.is-fullscreen .backlink,
+body.is-fullscreen .topbar,
+body.is-fullscreen .panel,
+body.is-fullscreen .levelbar {
+    display: none !important;
+}
+
+body.is-fullscreen .layout {
+    display: block;
+    width: 100%;
+    max-width: none;
+    margin: 0;
 }

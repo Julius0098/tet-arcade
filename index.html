@@ -3,35 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0a0e1a">
-    <meta name="description" content="TET Arcade — kokoelma selaimessa pelattavia pikkupelejä.">
+    <meta name="theme-color" content="#070a13">
+    <meta name="description" content="TET Arcade — kokoelma selaimessa pelattavia pikkupelejä. Ei asennuksia, ei latauksia.">
     <title>TET Arcade</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Taustan hehku ja ruudukko -->
     <div class="bg" aria-hidden="true">
         <span class="bg__glow bg__glow--one"></span>
         <span class="bg__glow bg__glow--two"></span>
+        <span class="bg__glow bg__glow--three"></span>
         <span class="bg__grid"></span>
+        <span class="bg__scan"></span>
     </div>
 
+    <a class="skip" href="#main">Siirry peleihin</a>
+
     <header class="hero">
-        <div class="wrap">
+        <div class="wrap hero__inner">
             <p class="hero__kicker">Selaimessa pelattava pelikokoelma</p>
+
             <h1 class="hero__title">
                 <span class="hero__tet">TET</span><span class="hero__arcade">Arcade</span>
             </h1>
+
             <p class="hero__subtitle">Games built during my TET internship</p>
+
             <p class="hero__lead">
                 Pikkupelejä, joita voi pelata heti — ei asennuksia, ei latauksia.
                 Valitse peli ja paina <strong>Pelaa</strong>.
             </p>
-            <p class="hero__count" id="gameCount" aria-live="polite"></p>
+
+            <!-- Luvut rakennetaan app.js:ssä peliluettelosta. -->
+            <ul class="stats" id="stats" aria-label="Kokoelman tiedot"></ul>
         </div>
     </header>
 
-    <main class="wrap main">
-        <h2 class="section-title">Pelit</h2>
+    <main class="wrap main" id="main">
+        <div class="section-head">
+            <div>
+                <h2 class="section-title">Pelit</h2>
+                <p class="section-note" id="resultCount" aria-live="polite"></p>
+            </div>
+
+            <!-- Haku: suodattaa kortit nimellä, kuvauksella ja tageilla. -->
+            <div class="search" id="searchWrap" hidden>
+                <label class="sr-only" for="search">Etsi peliä</label>
+                <span class="search__icon" aria-hidden="true"></span>
+                <input
+                    class="search__input"
+                    id="search"
+                    type="search"
+                    placeholder="Etsi peliä…"
+                    autocomplete="off"
+                    spellcheck="false">
+            </div>
+        </div>
 
         <!-- Pelikortit rakennetaan app.js:ssä games.json-tiedostosta. -->
         <ul class="games" id="games" aria-label="Pelivalikoima"></ul>
@@ -41,9 +69,18 @@
 
     <footer class="footer">
         <div class="wrap footer__inner">
-            <span>TET Arcade</span>
-            <span class="footer__dot" aria-hidden="true">&bull;</span>
-            <span>HTML + CSS + vanilla JavaScript</span>
+            <div class="footer__brand">
+                <span class="footer__logo" aria-hidden="true">TA</span>
+                <span class="footer__text">
+                    <strong>TET Arcade</strong>
+                    <span>Harjoitusprojektin pelikokoelma</span>
+                </span>
+            </div>
+
+            <p class="footer__tech">
+                Rakennettu puhtaalla <strong>HTML</strong>-, <strong>CSS</strong>- ja
+                <strong>JavaScript</strong>-koodilla — ei frameworkeja, ei riippuvuuksia.
+            </p>
         </div>
     </footer>
 
