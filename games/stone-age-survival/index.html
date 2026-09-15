@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0d0b16">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="Stone Age Survival — kivikauden selviytymistaistelu. Lobby, locker, loadout ja shop.">
+    <title>Stone Age Survival</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Kolikkoanimaation kerros -->
+    <div class="coinlayer" id="coinLayer" aria-hidden="true"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <a class="backlink" href="../../index.html" data-arcade>← Takaisin TET Arcadeen</a>
+
+    <div class="app">
+
+        <!-- ===================== YLÄPALKKI ===================== -->
+        <header class="topbar">
+            <div class="topbar__brand">
+                <span class="brand__mark" aria-hidden="true">🔥</span>
+                <span class="brand__text">STONE AGE <strong>SURVIVAL</strong></span>
+            </div>
+            <div class="topbar__right">
+                <div class="wallet" title="Kolikkosi">
+                    <span class="wallet__icon" aria-hidden="true">🪙</span>
+                    <strong data-coins>0</strong>
+                </div>
+                <button class="iconbtn" type="button" data-nav="settings" title="Asetukset">⚙</button>
+            </div>
+        </header>
+
+        <!-- ===================== NAVIGOINTI ===================== -->
+        <nav class="nav" id="nav">
+            <button class="navbtn" type="button" data-nav="lobby"><span aria-hidden="true">🏕</span>PLAY</button>
+            <button class="navbtn" type="button" data-nav="locker"><span aria-hidden="true">🧥</span>LOCKER</button>
+            <button class="navbtn" type="button" data-nav="loadout"><span aria-hidden="true">🔫</span>LOADOUT</button>
+            <button class="navbtn" type="button" data-nav="shop"><span aria-hidden="true">🛒</span>SHOP</button>
+            <button class="navbtn" type="button" data-nav="profile"><span aria-hidden="true">🏆</span>PROFILE</button>
+        </nav>
+
+        <main class="main">
+
+            <!-- ===================== LOBBY ===================== -->
+            <section class="screen screen--lobby" id="screen-lobby">
+                <div class="lobby">
+                    <canvas id="lobbyCanvas" class="lobby__canvas"></canvas>
+
+                    <div class="lobby__overlay">
+                        <div class="lobby__left">
+                            <div class="playcard">
+                                <div class="playcard__head">
+                                    <span class="playcard__label">SEURAAVA KENTTÄ</span>
+                                    <strong class="playcard__level" id="lobbyNextLevel">1</strong>
+                                </div>
+                                <button class="bigbtn" type="button" id="btnLobbyPlay">
+                                    <span aria-hidden="true">▶</span> PLAY
+                                </button>
+                                <button class="ghostbtn" type="button" data-nav="play">Valitse kenttä</button>
+                            </div>
+                        </div>
+
+                        <div class="lobby__right">
+                            <div class="quick">
+                                <button class="quick__btn" type="button" data-nav="locker">
+                                    <span aria-hidden="true">🧥</span><span>LOCKER</span>
+                                </button>
+                                <button class="quick__btn" type="button" data-nav="loadout">
+                                    <span aria-hidden="true">🔫</span><span>LOADOUT</span>
+                                </button>
+                                <button class="quick__btn" type="button" data-nav="shop">
+                                    <span aria-hidden="true">🛒</span><span>SHOP</span>
+                                </button>
+                                <button class="quick__btn" type="button" data-nav="profile">
+                                    <span aria-hidden="true">🏆</span><span>PROFILE</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================== PLAY ===================== -->
+            <section class="screen" id="screen-play" hidden>
+                <div class="scroll">
+                    <h1 class="title">PLAY</h1>
+                    <p class="subtitle">Valitse kenttä ja aloita selviytyminen</p>
+
+                    <div class="playgrid">
+                        <div class="panel panel--level">
+                            <div class="levelhead">
+                                <button class="stepper" type="button" id="btnLevelDown">−</button>
+                                <input class="levelinput" type="number" id="playLevelInput" min="1" value="1" aria-label="Kentän numero">
+                                <button class="stepper" type="button" id="btnLevelUp">+</button>
+                            </div>
+
+                            <input class="slider" type="range" id="playSlider" min="1" max="1" value="1" aria-label="Kentän valinta">
+
+                            <div class="playstats">
+                                <div class="playstat">
+                                    <span class="playstat__label">LEVEL</span>
+                                    <strong class="playstat__value" id="playLevel">1</strong>
+                                </div>
+                                <div class="playstat">
+                                    <span class="playstat__label">DIFFICULTY</span>
+                                    <span class="playstat__stars" id="playStars"></span>
+                                </div>
+                                <div class="playstat">
+                                    <span class="playstat__label">REWARD</span>
+                                    <strong class="playstat__value is-gold" id="playReward">+100 COINS</strong>
+                                </div>
+                            </div>
+
+                            <p class="playname" id="playName">Camp</p>
+
+                            <div class="playmeta">
+                                <div class="playmeta__row"><span>Alue</span><strong class="playmeta__value" id="playBiome">—</strong></div>
+                                <div class="playmeta__row"><span>Aallot</span><strong class="playmeta__value" id="playWaves">—</strong></div>
+                                <div class="playmeta__row"><span>Viholliset</span><strong class="playmeta__value" id="playEnemies">—</strong></div>
+                                <div class="playmeta__row"><span>Bossi</span><strong class="playmeta__value" id="playBoss">—</strong></div>
+                            </div>
+
+                            <p class="locknote" id="playLockNote" hidden>🔒 Tämä kenttä on vielä lukossa. Selvitä edelliset kentät ensin.</p>
+
+                            <button class="bigbtn" type="button" id="btnStartLevel">START LEVEL</button>
+                            <button class="ghostbtn" type="button" id="btnLevelMax">Hyppää viimeisimpään</button>
+                            <p class="hint" id="playProgress">Avattu 1 / 1 000 kenttää</p>
+                        </div>
+
+                        <div class="panel panel--brief">
+                            <h2 class="panel__title">Tehtävä</h2>
+                            <ul class="brief">
+                                <li><span aria-hidden="true">⚔️</span> Kukista kaikki aallot.</li>
+                                <li><span aria-hidden="true">👑</span> Joka 10. kenttä on bossikenttä.</li>
+                                <li><span aria-hidden="true">🪙</span> Saat kolikoita jokaisesta suoritetusta kentästä.</li>
+                                <li><span aria-hidden="true">🎁</span> Bonukset: ei vahinkoja, nopea suoritus, kaikki viholliset.</li>
+                                <li><span aria-hidden="true">💚</span> Kerää parannuspaketteja vihollisilta.</li>
+                            </ul>
+
+                            <h2 class="panel__title">Ohjaus</h2>
+                            <ul class="keys">
+                                <li><span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span><em>Liiku</em></li>
+                                <li><span class="key">Hiiri</span><em>Tähtää ja ammu</em></li>
+                                <li><span class="key">Space</span><em>Ammu</em></li>
+                                <li><span class="key">1</span><span class="key">2</span><span class="key">3</span><span class="key">4</span><em>Vaihda asetta</em></li>
+                                <li><span class="key">P</span><span class="key">Esc</span><em>Tauko</em></li>
+                                <li><span class="key">📱</span><em>Vasemmalla liikut, oikealla tähtäät</em></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================== LOCKER ===================== -->
+            <section class="screen" id="screen-locker" hidden>
+                <div class="scroll">
+                    <h1 class="title">LOCKER</h1>
+                    <p class="subtitle">Muokkaa hahmoasi — valinta näkyy heti esikatselussa</p>
+                    <p class="hint" id="lockerSummary"></p>
+
+                    <div class="locker">
+                        <div class="locker__preview">
+                            <div class="previewbox">
+                                <canvas id="lockerPreview"></canvas>
+                            </div>
+                        </div>
+                        <div class="locker__items">
+                            <div class="tabs" id="lockerTabs"></div>
+                            <div class="items" id="lockerGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================== LOADOUT ===================== -->
+            <section class="screen" id="screen-loadout" hidden>
+                <div class="scroll">
+                    <h1 class="title">LOADOUT</h1>
+                    <p class="subtitle">Valitse aseet jokaiseen paikkaan. Lähitaisteluase näkyy lobbyssä.</p>
+                    <p class="hint" id="loadoutHint"></p>
+
+                    <div class="slots" id="loadoutSlots"></div>
+                    <div class="items items--wide" id="loadoutGrid"></div>
+                </div>
+            </section>
+
+            <!-- ===================== SHOP ===================== -->
+            <section class="screen" id="screen-shop" hidden>
+                <div class="scroll">
+                    <h1 class="title">SHOP</h1>
+                    <p class="subtitle">Kaikki ostokset tehdään pelaamalla ansaituilla kolikoilla. Ei oikeaa rahaa.</p>
+
+                    <div class="tabs" id="shopTabs"></div>
+
+                    <div class="shop">
+                        <div class="shop__preview">
+                            <div class="previewbox previewbox--tall">
+                                <canvas id="shopPreview"></canvas>
+                            </div>
+                            <p class="hint">Napauta tuotetta nähdäksesi sen hahmolla</p>
+                        </div>
+                        <div class="items items--shop" id="shopGrid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================== PROFILE ===================== -->
+            <section class="screen" id="screen-profile" hidden>
+                <div class="scroll">
+                    <h1 class="title">PROFILE</h1>
+                    <p class="subtitle">Edistymisesi ja kokoelmasi</p>
+
+                    <div class="statgrid">
+                        <div class="stat"><span>🪙 Kolikot</span><strong id="profileCoins">0</strong></div>
+                        <div class="stat"><span>🏔 Korkein kenttä</span><strong id="profileLevel">1</strong></div>
+                        <div class="stat"><span>✅ Läpäisty</span><strong id="profileCleared">0</strong></div>
+                        <div class="stat"><span>💀 Vihollisia</span><strong id="profileEnemies">0</strong></div>
+                        <div class="stat"><span>👑 Bosseja</span><strong id="profileBosses">0</strong></div>
+                        <div class="stat"><span>⭐ Paras pisteet</span><strong id="profileBest">0</strong></div>
+                        <div class="stat"><span>💰 Ansaitut kolikot</span><strong id="profileEarned">0</strong></div>
+                    </div>
+
+                    <h2 class="section">KOKOELMA</h2>
+                    <div class="progresses" id="profileCollections"></div>
+                </div>
+            </section>
+
+            <!-- ===================== SETTINGS ===================== -->
+            <section class="screen" id="screen-settings" hidden>
+                <div class="scroll">
+                    <h1 class="title">SETTINGS</h1>
+                    <p class="subtitle">Asetukset tallentuvat automaattisesti</p>
+
+                    <div class="panel panel--settings">
+                        <label class="setting">
+                            <span class="setting__text"><strong>Sound</strong><em>Äänitehosteet</em></span>
+                            <input type="checkbox" id="setSound" checked>
+                        </label>
+                        <label class="setting">
+                            <span class="setting__text"><strong>Music</strong><em>Taustamusiikki</em></span>
+                            <input type="checkbox" id="setMusic" checked>
+                        </label>
+                        <label class="setting">
+                            <span class="setting__text"><strong>Screen Shake</strong><em>Ruudun tärähdys</em></span>
+                            <input type="checkbox" id="setShake" checked>
+                        </label>
+                        <label class="setting">
+                            <span class="setting__text"><strong>Touch Controls</strong><em>Näytä kosketusohjaimet</em></span>
+                            <input type="checkbox" id="setTouch" checked>
+                        </label>
+                    </div>
+
+                    <div class="panel panel--settings">
+                        <h2 class="panel__title">Tallennus</h2>
+                        <p class="hint">Edistyminen tallennetaan selaimeesi automaattisesti.</p>
+                        <button class="ghostbtn ghostbtn--danger" type="button" id="btnResetSave">Nollaa edistyminen</button>
+                    </div>
+
+                    <div class="panel panel--settings">
+                        <h2 class="panel__title">Tietoja</h2>
+                        <p class="hint">
+                            Stone Age Survival on omaperäinen kivikausiaiheinen selviytymispeli.
+                            Kaikki ostokset tehdään pelin sisäisillä kolikoilla, jotka ansaitaan pelaamalla.
+                            Ei oikeaa rahaa, ei loot boxeja, ei pay-to-win-mekaniikkoja.
+                            Kaikki kosmeettiset esineet ovat vain ulkonäöllisiä.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================== GAME ===================== -->
+            <section class="screen screen--game" id="screen-game" hidden>
+                <div class="gamewrap">
+                    <div class="gamehud">
+                        <div class="hudleft">
+                            <div class="hpbar">
+                                <div class="hpbar__fill" id="hudHp"></div>
+                                <span class="hpbar__text" id="hudHpText">100 / 100</span>
+                            </div>
+                            <div class="hudinfo">
+                                <span id="hudWave">WAVE 1 / 1</span>
+                                <span id="hudEnemies">0 vihollista</span>
+                            </div>
+                            <span class="combo" id="hudCombo" hidden>COMBO x2</span>
+                        </div>
+
+                        <div class="hudcenter">
+                            <span class="gamelevel" id="gameLevelLabel">LEVEL 1</span>
+                            <span class="gameboss" id="gameBossLabel"></span>
+                        </div>
+
+                        <div class="hudright">
+                            <div class="hudstat">
+                                <span class="hudstat__label">SCORE</span>
+                                <strong id="hudScore">0</strong>
+                            </div>
+                            <div class="hudstat">
+                                <span class="hudstat__label">COINS</span>
+                                <strong class="is-gold" id="hudCoins">0</strong>
+                            </div>
+                            <button class="iconbtn" type="button" id="btnGamePause" title="Tauko (P)">⏸</button>
+                        </div>
+                    </div>
+
+                    <div class="gamestage" id="gamestage">
+                        <canvas id="gameCanvas"></canvas>
+                    </div>
+
+                    <div class="slotbar">
+                        <button class="slotbtn" type="button" id="slotBtn0">
+                            <span class="slotbtn__key">1</span><span class="slotbtn__name">—</span>
+                        </button>
+                        <button class="slotbtn" type="button" id="slotBtn1">
+                            <span class="slotbtn__key">2</span><span class="slotbtn__name">—</span>
+                        </button>
+                        <button class="slotbtn" type="button" id="slotBtn2">
+                            <span class="slotbtn__key">3</span><span class="slotbtn__name">—</span>
+                        </button>
+                        <button class="slotbtn" type="button" id="slotBtn3">
+                            <span class="slotbtn__key">4</span><span class="slotbtn__name">—</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pause -->
+                <div class="overlay" id="pauseOverlay" hidden>
+                    <div class="overlay__panel">
+                        <h2 class="overlay__title">TAUKO</h2>
+                        <p class="overlay__sub">Peli on keskeytetty</p>
+                        <div class="menu">
+                            <button class="bigbtn" type="button" id="btnResume">CONTINUE</button>
+                            <button class="ghostbtn" type="button" id="btnRestartLevel">RESTART LEVEL</button>
+                            <button class="ghostbtn" type="button" data-nav="settings">SETTINGS</button>
+                            <button class="ghostbtn" type="button" id="btnQuitLevel">LOBBY</button>
+                            <button class="ghostbtn ghostbtn--danger" type="button" data-arcade>BACK TO GAMES</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tulos -->
+                <div class="overlay" id="resultOverlay" hidden>
+                    <div class="overlay__panel overlay__panel--wide">
+                        <p class="overlay__badge overlay__badge--gold" id="resultBadge">LEVEL COMPLETE!</p>
+                        <h2 class="overlay__title" id="resultTitle">🏆 LEVEL 1</h2>
+
+                        <div class="stars" id="resultStars"></div>
+
+                        <ul class="results">
+                            <li><span>⭐ SCORE</span><strong id="resultScore">0</strong></li>
+                            <li><span>💀 ENEMIES DEFEATED</span><strong id="resultEnemies">0</strong></li>
+                            <li><span>⏱ TIME</span><strong id="resultTime">0:00</strong></li>
+                            <li><span>🩸 DAMAGE TAKEN</span><strong id="resultDamage">0</strong></li>
+                        </ul>
+
+                        <div class="reward">
+                            <div class="reward__row">
+                                <span>REWARD</span>
+                                <strong class="is-gold" id="resultReward">+0 COINS</strong>
+                            </div>
+                            <div class="reward__row">
+                                <span>TOTAL</span>
+                                <strong class="is-gold" id="resultTotal">0 COINS</strong>
+                            </div>
+                        </div>
+
+                        <div class="bonuses" id="resultBonus"></div>
+
+                        <div class="menu">
+                            <button class="bigbtn" type="button" id="btnNextLevel">NEXT LEVEL</button>
+                            <button class="ghostbtn" type="button" id="btnRetryLevel">REPLAY</button>
+                            <button class="ghostbtn" type="button" id="btnResultLobby">LOBBY</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="save.js"></script>
+    <script src="render.js"></script>
+    <script src="game.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>

@@ -36,6 +36,19 @@
       "status": "Pelattavissa",
       "tags": ["15 kenttää", "Power-upit", "Combo", "Puhelin"],
       "accent": "#4fd1c5"
+    },
+    {
+      "id": "stone-age-survival",
+      "title": "Stone Age Survival",
+      "tagline": "Selviydy kivikaudella — kustomoi, päivit­tä, etene",
+      "description": "Moderni lobby, locker, loadout ja shop. Selviydy 1000 kentästä, kukista bossit joka kymmenes kenttä ja ansaitse kolikoita, joilla avaat asuja, aseiden skinejä ja emoteja.",
+      "path": "games/stone-age-survival/",
+      "scene": "stone",
+      "kicker": "Selviytymistaistelu",
+      "status": "Pelattavissa",
+      "tags": ["1000 kenttää", "Bossit", "Locker", "Shop", "Puhelin"],
+      "accent": "#ffa53c",
+      "featured": true
     }
   ]
 }

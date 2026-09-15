@@ -294,6 +294,74 @@
                 + '</g>';
         },
 
+        // Kivikautinen tukikohta: nuotio, vuoret, luola ja hahmo.
+        stone: function (id) {
+            return '<defs>'
+                + '<linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">'
+                + '<stop offset="0" stop-color="#1b2a52"/><stop offset="0.55" stop-color="#4a3a6a"/>'
+                + '<stop offset="1" stop-color="#a05a4a"/></linearGradient>'
+                + '<linearGradient id="' + id + '-ground" x1="0" y1="0" x2="0" y2="1">'
+                + '<stop offset="0" stop-color="#3a3020"/><stop offset="1" stop-color="#1a1610"/>'
+                + '</linearGradient>'
+                + '<radialGradient id="' + id + '-fire" cx="0.5" cy="0.7" r="0.6">'
+                + '<stop offset="0" stop-color="#fff0b8"/><stop offset="0.45" stop-color="#ffa53c"/>'
+                + '<stop offset="1" stop-color="#ff5a1f"/></radialGradient>'
+                + '</defs>'
+                + '<rect width="320" height="140" fill="url(#' + id + ')"/>'
+                // Kuu ja tähtiä
+                + '<g fill="#ffffff" opacity="0.75">'
+                + '<rect x="42" y="14" width="1.6" height="1.6"/><rect x="86" y="26" width="1.6" height="1.6"/>'
+                + '<rect x="150" y="12" width="1.6" height="1.6"/><rect x="228" y="22" width="1.6" height="1.6"/>'
+                + '<rect x="274" y="34" width="1.6" height="1.6"/><rect x="118" y="40" width="1.6" height="1.6"/>'
+                + '</g>'
+                + '<circle cx="262" cy="30" r="13" fill="#ffeecb" opacity="0.9"/>'
+                // Vuoret
+                + '<path d="M0 96 L38 58 L76 96 Z" fill="#2a2a4e"/>'
+                + '<path d="M54 96 L100 48 L148 96 Z" fill="#22223f"/>'
+                + '<path d="M128 96 L176 62 L224 96 Z" fill="#2a2a4e"/>'
+                + '<path d="M206 96 L252 54 L300 96 Z" fill="#22223f"/>'
+                // Luola
+                + '<path d="M12 104 Q34 62 56 104 Z" fill="#12101c"/>'
+                + '<ellipse cx="34" cy="100" rx="11" ry="14" fill="#0a0812"/>'
+                // Maanpinta
+                + '<rect y="100" width="320" height="40" fill="url(#' + id + '-ground)"/>'
+                // Kivikehä
+                + '<g fill="#5a5668">'
+                + '<path d="M96 104 L100 86 L108 86 L112 104 Z"/>'
+                + '<path d="M126 104 L129 82 L138 82 L141 104 Z"/>'
+                + '<path d="M186 104 L189 82 L198 82 L201 104 Z"/>'
+                + '<path d="M216 104 L220 86 L228 86 L232 104 Z"/>'
+                + '</g>'
+                // Nuotio
+                + '<ellipse cx="164" cy="106" rx="26" ry="8" fill="#3a2a18"/>'
+                + '<path d="M164 60 Q176 84 170 102 Q164 108 158 102 Q152 84 164 60 Z" fill="url(#' + id + '-fire)"/>'
+                + '<path d="M164 76 Q170 90 166 100 Q164 103 162 100 Q158 90 164 76 Z" fill="#fff0b8" opacity="0.85"/>'
+                + '<ellipse cx="164" cy="104" rx="42" ry="16" fill="#ffa53c" opacity="0.16"/>'
+                // Puut
+                + '<g fill="#1f3a24">'
+                + '<rect x="284" y="74" width="6" height="30" fill="#3a2a18"/>'
+                + '<circle cx="287" cy="66" r="17"/><circle cx="274" cy="76" r="12"/><circle cx="300" cy="74" r="13"/>'
+                + '</g>'
+                + '<g fill="#1f3a24">'
+                + '<rect x="8" y="80" width="5" height="24" fill="#3a2a18"/>'
+                + '<circle cx="10" cy="74" r="14"/><circle cx="22" cy="82" r="10"/>'
+                + '</g>'
+                // Hahmo
+                + '<g transform="translate(164 96)">'
+                + '<ellipse cx="0" cy="6" rx="20" ry="5" fill="#000000" opacity="0.35"/>'
+                + '<rect x="-4" y="-2" width="3.6" height="8" fill="#8a6b4a"/>'
+                + '<rect x="1.4" y="-2" width="3.6" height="8" fill="#8a6b4a"/>'
+                + '<rect x="-6.5" y="-13" width="13" height="12" rx="2.5" fill="#c98a5a"/>'
+                + '<rect x="-6.5" y="-11" width="13" height="4" rx="1.5" fill="#8a5a2b"/>'
+                + '<circle cx="0" cy="-17.5" r="4.6" fill="#e8b98d"/>'
+                + '<path d="M-4.6 -18.5 A4.6 4.6 0 0 1 4.6 -18.5 Z" fill="#4a2f1a"/>'
+                + '<circle cx="-1.6" cy="-17.4" r="0.8" fill="#1a1410"/>'
+                + '<circle cx="1.6" cy="-17.4" r="0.8" fill="#1a1410"/>'
+                + '<rect x="6.6" y="-12" width="2.6" height="9" fill="#8a5a2b" transform="rotate(-14 7 8)"/>'
+                + '<circle cx="9.6" cy="-11.5" r="3" fill="#c9a06b"/>'
+                + '</g>';
+        },
+
         // Yleinen arcade-maisema: pelihalli ja neonvalot.
         arcade: function (id) {
             var lights = '';
