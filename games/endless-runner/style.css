@@ -951,9 +951,10 @@ kbd {
         overflow: hidden;
     }
 
-    /* Pelin aikana pelialue peittää koko ruudun: canvas sovitetaan siihen
-       kuvasuhde säilyttäen, jolloin koko pelimaailma näkyy eikä mitään
-       tärkeää jää reunojen ulkopuolelle. */
+    /* Pelin aikana canvas täyttää pelialueen. Vaakatasossa venytetään reunasta
+       reunaan (cover): pelin kuvasuhde 8:3 on lähellä puhelimen vaakatasoa,
+       joten rajaus jää pieneksi. Pystyssä näytetään koko maailma (contain),
+       koska muuten näkyviin jäisi vain kapea siivu. */
     body.is-playing .stage #game {
         width: 100%;
         height: 100%;
@@ -962,22 +963,13 @@ kbd {
         object-fit: contain;
     }
 
-    /* Pisteet sovitetaan canvasin leveydelle, jotta ne eivät valu tyhjälle
-       alueelle pystynäytöllä. */
+    /* Pisteet ja ennätys: luettavat koot pienelläkin ruudulla, ja ne
+       sovitetaan pelialueen leveydelle. */
     body.is-playing .hud {
         left: 50%;
         right: auto;
         width: min(100vw, 100vh * 2.667);
         transform: translateX(-50%);
-    }
-
-    /* Kosketusohje pois pelin päältä. */
-    body.is-playing .touchhint {
-        display: none !important;
-    }
-
-    /* Pisteet ja ennätys: luettavat koot pienelläkin ruudulla. */
-    body.is-playing .hud {
         padding: 14px 16px;
         font-size: 12px;
         letter-spacing: 0.08em;
@@ -989,6 +981,15 @@ kbd {
 
     body.is-playing .hud__coins {
         padding: 4px 10px 4px 8px;
+    }
+}
+
+/* Puhelin vaakatasossa pelin aikana: canvas venytetään reunasta reunaan, jolloin
+   peli täyttää koko ruudun. Kuvasuhde 8:3 on lähellä puhelimen vaakatasoa,
+   joten rajaus jää pieneksi eikä pelin kannalta tärkeää jää piiloon. */
+@media (max-width: 900px) and (orientation: landscape) {
+    body.is-playing .stage #game {
+        object-fit: cover;
     }
 }
 
