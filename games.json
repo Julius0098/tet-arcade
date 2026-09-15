@@ -24,6 +24,18 @@
       "status": "Pelattavissa",
       "tags": ["Kentät", "Checkpointit", "Viholliset", "Puhelin"],
       "accent": "#8b7cf6"
+    },
+    {
+      "id": "maze-chase",
+      "title": "Maze Chase",
+      "tagline": "Kerää energiapisteet ennen kuin viholliset ehtivät",
+      "description": "Viisitoista neonhenkistä sokkeloa, neljä erilaista vihollista ja viisi power-upia. Kerää sarjassa kasvattaaksesi COMBO-kerrointa ja selvita kaikki kentät yhdellä kolmesta elämästä.",
+      "path": "games/maze-chase/",
+      "scene": "maze",
+      "kicker": "Sokkelopeli",
+      "status": "Pelattavissa",
+      "tags": ["15 kenttää", "Power-upit", "Combo", "Puhelin"],
+      "accent": "#4fd1c5"
     }
   ]
 }

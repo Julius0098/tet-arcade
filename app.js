@@ -218,6 +218,82 @@
                 + '</g>';
         },
 
+        // Neonhenkinen sokkelo: käytävät, energiapisteet ja viholliset.
+        maze: function (id) {
+            return '<defs>'
+                + '<linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1">'
+                + '<stop offset="0" stop-color="#0a1030"/><stop offset="1" stop-color="#1a1150"/>'
+                + '</linearGradient>'
+                + '<linearGradient id="' + id + '-wall" x1="0" y1="0" x2="0" y2="1">'
+                + '<stop offset="0" stop-color="#5b4fd0"/><stop offset="1" stop-color="#221a5e"/>'
+                + '</linearGradient>'
+                + '<radialGradient id="' + id + '-hero" cx="0.35" cy="0.3" r="0.8">'
+                + '<stop offset="0" stop-color="#eafcff"/><stop offset="0.55" stop-color="var(--accent)"/>'
+                + '<stop offset="1" stop-color="#12707f"/></radialGradient>'
+                + '</defs>'
+                + '<rect width="320" height="140" fill="url(#' + id + ')"/>'
+                // Sokkelon seinät
+                + '<g fill="url(#' + id + '-wall)" opacity="0.95">'
+                + '<rect x="0" y="0" width="320" height="8"/>'
+                + '<rect x="0" y="132" width="320" height="8"/>'
+                + '<rect x="0" y="0" width="8" height="140"/>'
+                + '<rect x="312" y="0" width="8" height="140"/>'
+                + '<rect x="24" y="22" width="10" height="34" rx="3"/>'
+                + '<rect x="24" y="74" width="10" height="42" rx="3"/>'
+                + '<rect x="52" y="22" width="58" height="10" rx="3"/>'
+                + '<rect x="52" y="50" width="10" height="30" rx="3"/>'
+                + '<rect x="52" y="98" width="10" height="26" rx="3"/>'
+                + '<rect x="86" y="72" width="52" height="10" rx="3"/>'
+                + '<rect x="128" y="22" width="10" height="40" rx="3"/>'
+                + '<rect x="128" y="94" width="10" height="30" rx="3"/>'
+                + '<rect x="156" y="22" width="46" height="10" rx="3"/>'
+                + '<rect x="156" y="52" width="10" height="42" rx="3"/>'
+                + '<rect x="192" y="52" width="52" height="10" rx="3"/>'
+                + '<rect x="192" y="94" width="10" height="30" rx="3"/>'
+                + '<rect x="216" y="22" width="10" height="46" rx="3"/>'
+                + '<rect x="244" y="52" width="10" height="50" rx="3"/>'
+                + '<rect x="268" y="22" width="10" height="46" rx="3"/>'
+                + '<rect x="268" y="90" width="34" height="10" rx="3"/>'
+                + '</g>'
+                // Energiapisteet
+                + '<g fill="#b4ebff" opacity="0.9">'
+                + '<circle cx="46" cy="46" r="2.6"/><circle cx="46" cy="126" r="2.6"/>'
+                + '<circle cx="70" cy="72" r="2.6"/><circle cx="70" cy="126" r="2.6"/>'
+                + '<circle cx="100" cy="46" r="2.6"/><circle cx="100" cy="100" r="2.6"/>'
+                + '<circle cx="146" cy="76" r="2.6"/><circle cx="146" cy="126" r="2.6"/>'
+                + '<circle cx="176" cy="46" r="2.6"/><circle cx="176" cy="108" r="2.6"/>'
+                + '<circle cx="210" cy="76" r="2.6"/><circle cx="210" cy="126" r="2.6"/>'
+                + '<circle cx="234" cy="46" r="2.6"/><circle cx="262" cy="76" r="2.6"/>'
+                + '<circle cx="290" cy="126" r="2.6"/>'
+                + '</g>'
+                // Kolikko
+                + '<circle cx="262" cy="112" r="7" fill="#ffd45e" stroke="#8a5a12" stroke-width="1.8"/>'
+                + '<circle cx="260" cy="110" r="2" fill="#fff3cd"/>'
+                // Kristalli
+                + '<g transform="translate(100 26)">'
+                + '<path d="M0 -8 L6 0 L0 8 L-6 0 Z" fill="#7cf0ff"/>'
+                + '<path d="M0 -4 L2.6 0 L0 4 L-2.6 0 Z" fill="#ffffff" opacity="0.75"/>'
+                + '</g>'
+                // Viholliset: eri muodot
+                + '<g transform="translate(180 118)">'
+                + '<path d="M0 -11 L10 8 L-10 8 Z" fill="#ff5c7a"/>'
+                + '<circle cx="-4" cy="2" r="2" fill="#ffd0da"/><circle cx="4" cy="2" r="2" fill="#ffd0da"/>'
+                + '</g>'
+                + '<g transform="translate(240 46)">'
+                + '<circle r="9" fill="#4fd1c5"/>'
+                + '<circle cx="-3" cy="-2" r="1.9" fill="#c9fff8"/><circle cx="3" cy="-2" r="1.9" fill="#c9fff8"/>'
+                + '</g>'
+                + '<g transform="translate(70 90) rotate(45)">'
+                + '<rect x="-7" y="-7" width="14" height="14" rx="2" fill="#b98cff"/>'
+                + '</g>'
+                // Pelaaja: suu auki
+                + '<g transform="translate(46 100)">'
+                + '<circle r="12" fill="url(#' + id + '-hero)" opacity="0.28"/>'
+                + '<path d="M0 0 L11 -7 A12 12 0 1 1 11 7 Z" fill="url(#' + id + '-hero)"/>'
+                + '<circle cx="1" cy="-6" r="2.2" fill="#06202a"/>'
+                + '</g>';
+        },
+
         // Yleinen arcade-maisema: pelihalli ja neonvalot.
         arcade: function (id) {
             var lights = '';

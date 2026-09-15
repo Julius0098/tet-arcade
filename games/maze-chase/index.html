@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <!-- Puhelin: ei zoomia, sivun leveys laitteen mukaan, lovi huomioidaan -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#070b18">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="Maze Chase — nopeatempoinen neonhenkinen sokkelopeli.">
+    <title>Maze Chase</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Paluulinkki arcade-valikkoon. -->
+    <a class="backlink" href="../../index.html">← Takaisin TET Arcadeen</a>
+
+    <div class="game">
+        <!-- Yläpalkki: pisteet, kolikot, kenttä, elämät -->
+        <header class="topbar">
+            <div class="topbar__stats">
+                <span class="chip chip--score" title="Pisteet">
+                    <span class="chip__label">SCORE</span><strong id="hudScore">0</strong>
+                </span>
+                <span class="chip chip--coins" title="Kolikot">
+                    <span class="coin-dot" aria-hidden="true"></span><strong id="hudCoins">0</strong>
+                </span>
+                <span class="chip chip--level" title="Kenttä">
+                    <span class="chip__label">LEVEL</span><strong id="hudLevel">1</strong>
+                </span>
+                <span class="chip chip--pellets" title="Jäljellä olevat energiapisteet">
+                    <span class="pellet-dot" aria-hidden="true"></span><strong id="hudPellets">0</strong>
+                </span>
+                <span class="chip chip--lives" title="Elämät"><strong id="hudLives">❤️❤️❤️</strong></span>
+                <span class="chip chip--combo" id="hudComboWrap" hidden title="Pistekerroin">
+                    COMBO <strong id="hudCombo">x2</strong>
+                </span>
+            </div>
+
+            <div class="topbar__buttons">
+                <button class="iconbtn" id="btnSound" type="button" title="Äänet päälle / pois" aria-pressed="false">🔊</button>
+                <button class="iconbtn" id="btnMusic" type="button" title="Musiikki päälle / pois" aria-pressed="false">🎵</button>
+                <button class="iconbtn" id="btnPause" type="button" title="Tauko (P)">⏸</button>
+            </div>
+        </header>
+
+        <!-- Aktiiviset power-upit -->
+        <p class="power" id="hudPower" hidden></p>
+
+        <!-- Pelialue -->
+        <div class="stage" id="stage">
+            <canvas id="game" width="672" height="544" aria-label="Maze Chase -peli"></canvas>
+        </div>
+
+        <!-- Kosketusohjain: D-pad. Pyyhkäisy toimii koko pelialueella. -->
+        <div class="dpad" id="dpad" aria-hidden="true">
+            <button class="dbtn dbtn--up" id="btnUp" type="button" aria-label="Ylös">▲</button>
+            <button class="dbtn dbtn--left" id="btnLeft" type="button" aria-label="Vasemmalle">◀</button>
+            <button class="dbtn dbtn--down" id="btnDown" type="button" aria-label="Alas">▼</button>
+            <button class="dbtn dbtn--right" id="btnRight" type="button" aria-label="Oikealle">▶</button>
+        </div>
+    </div>
+
+    <!-- Pause-valikko -->
+    <div class="overlay" id="pauseOverlay" hidden>
+        <div class="overlay__panel">
+            <h2 class="overlay__title">Tauko</h2>
+            <p class="overlay__sub" id="pauseSub">Kenttä 1</p>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnContinue" type="button">CONTINUE</button>
+                <button class="mbtn" id="btnRestart" type="button">RESTART LEVEL</button>
+                <button class="mbtn" id="btnSettings" type="button">SETTINGS</button>
+                <button class="mbtn mbtn--ghost" id="btnBackToGames" type="button">BACK TO GAMES</button>
+            </div>
+
+            <div class="settings" id="settingsPanel" hidden>
+                <h3 class="settings__title">Asetukset</h3>
+                <label class="settings__row">
+                    <span>Sound</span>
+                    <input type="checkbox" id="optSound" checked>
+                </label>
+                <label class="settings__row">
+                    <span>Music</span>
+                    <input type="checkbox" id="optMusic" checked>
+                </label>
+                <label class="settings__row">
+                    <span>Näytä D-pad</span>
+                    <input type="checkbox" id="optDpad" checked>
+                </label>
+                <button class="mbtn mbtn--small" id="btnCloseSettings" type="button">Valmis</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kenttä läpi -->
+    <div class="overlay" id="clearOverlay" hidden>
+        <div class="overlay__panel">
+            <p class="overlay__badge">Kenttä läpi!</p>
+            <h2 class="overlay__title" id="clearTitle">Hienoa!</h2>
+
+            <ul class="results">
+                <li><span>Pisteet</span><strong id="clearScore">0</strong></li>
+                <li><span>Kolikot</span><strong id="clearCoins">0 / 0</strong></li>
+                <li><span>Aika</span><strong id="clearTime">0:00</strong></li>
+                <li><span>Bonus</span><strong id="clearBonus">+0</strong></li>
+            </ul>
+
+            <p class="overlay__note" id="clearNote" hidden></p>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnNext" type="button">Seuraava kenttä</button>
+                <button class="mbtn mbtn--ghost" id="btnClearBack" type="button">BACK TO GAMES</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game over -->
+    <div class="overlay" id="overOverlay" hidden>
+        <div class="overlay__panel">
+            <p class="overlay__badge overlay__badge--danger">GAME OVER</p>
+            <h2 class="overlay__title">Viholliset saivat sinut</h2>
+
+            <ul class="results">
+                <li><span>Pisteet</span><strong id="overScore">0</strong></li>
+                <li><span>Kolikot</span><strong id="overCoins">0</strong></li>
+                <li><span>Kenttä</span><strong id="overLevel">1 / 15</strong></li>
+                <li><span>Paras tulos</span><strong id="overBest">0</strong></li>
+            </ul>
+
+            <p class="overlay__note" id="overNote" hidden></p>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnRetry" type="button">Yritä uudelleen</button>
+                <button class="mbtn mbtn--ghost" id="btnOverBack" type="button">BACK TO GAMES</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lopputulokset -->
+    <div class="overlay" id="finalOverlay" hidden>
+        <div class="overlay__panel">
+            <p class="overlay__badge overlay__badge--gold">Kaikki 15 kenttää läpi!</p>
+            <h2 class="overlay__title">Olet sokkelomestari!</h2>
+
+            <ul class="results">
+                <li><span>Loppupisteet</span><strong id="finalScore">0</strong></li>
+                <li><span>Kolikot yhteensä</span><strong id="finalCoins">0</strong></li>
+                <li><span>Kokonaisaika</span><strong id="finalTime">0:00</strong></li>
+                <li><span>Paras tulos</span><strong id="finalBest">0</strong></li>
+            </ul>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnFinalReplay" type="button">Pelaa alusta</button>
+                <button class="mbtn mbtn--ghost" id="btnFinalBack" type="button">BACK TO GAMES</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ohjeet -->
+    <div class="overlay" id="helpOverlay" hidden>
+        <div class="overlay__panel">
+            <h2 class="overlay__title">Maze Chase</h2>
+            <p class="overlay__sub">Kerää kaikki energiapisteet ennen kuin viholliset saavat sinut kiinni</p>
+
+            <ul class="help">
+                <li><span class="help__key">W</span><span class="help__key">↑</span><span class="help__txt">Ylös</span></li>
+                <li><span class="help__key">A</span><span class="help__key">←</span><span class="help__txt">Vasemmalle</span></li>
+                <li><span class="help__key">S</span><span class="help__key">↓</span><span class="help__txt">Alas</span></li>
+                <li><span class="help__key">D</span><span class="help__key">→</span><span class="help__txt">Oikealle</span></li>
+                <li><span class="help__key">P</span><span class="help__key">Esc</span><span class="help__txt">Tauko</span></li>
+            </ul>
+
+            <p class="overlay__note">
+                Puhelimessa voit käyttää joko D-padia tai pyyhkäistä haluamaasi suuntaan.
+                Kerää sarjassa saadaksesi COMBO-kertoimen.
+            </p>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnStart" type="button">Aloita peli</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
