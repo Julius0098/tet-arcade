@@ -14,6 +14,13 @@
     <a class="backlink" href="../../index.html">← Takaisin TET Arcadeen</a>
 
     <div class="layout">
+        <!-- Hampurilaisnappi: avaa ja sulkee valikon puhelimessa.
+             Työpöydällä valikko on aina näkyvissä eikä nappia tarvita. -->
+        <button class="menubtn" id="menuBtn" type="button" aria-expanded="false" aria-controls="panel">
+            <span class="menubtn__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="menubtn__label" id="menuLabel">Valikko</span>
+        </button>
+
         <aside class="panel" id="panel">
             <h2 class="panel__title">Hahmo</h2>
             <p class="panel__lead">Valitse hahmo, jolla juokset.</p>

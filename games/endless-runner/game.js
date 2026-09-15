@@ -224,6 +224,8 @@
     const overlayBtn = document.getElementById('overlayBtn');
     const overlayHint = document.getElementById('overlayHint');
     const rotateTip = document.getElementById('rotateTip');
+    const menuBtn = document.getElementById('menuBtn');
+    const menuLabel = document.getElementById('menuLabel');
     const panelEl = document.getElementById('panel');
     const pickerEl = document.getElementById('picker');
     const pickerHintEl = document.getElementById('pickerHint');
@@ -515,6 +517,9 @@
             worldCursor: () => worldCursor,
             distance: () => run.distance,
             width: () => width,
+            height: () => height,
+            groundY: () => groundY,
+            dpr: () => dpr,
             // Testeille: siirrä hahmo tiettyyn kohtaan ja nollaa liike.
             place: (x, y) => {
                 player.x = x;
@@ -805,6 +810,8 @@
         const active = playing && isSmallScreen();
         if (active === lastPlayMode) return;
         lastPlayMode = active;
+        // Peli alkaa: valikko kiinni, jotta peli saa koko ruudun.
+        closeMenu();
         document.body.classList.toggle('is-playing', active);
         syncRotateTip();
         resize();                               // peli saa koko ruudun korkeuden
@@ -844,6 +851,26 @@
             ? window.matchMedia('(orientation: portrait)').matches
             : window.innerHeight > window.innerWidth;
         rotateTip.hidden = !portrait;
+    }
+
+    /* ---------- Valikko (puhelin) ----------
+       Puhelimessa valikko on oletuksena kiinni, jotta peli saa mahdollisimman
+       paljon tilaa. Hampurilaisnappi avaa ja sulkee sen. Työpöydällä valikko
+       on aina näkyvissä eikä luokkaa käytetä. */
+
+    function syncMenuUI() {
+        const open = document.body.classList.contains('is-menu-open');
+        if (menuBtn) menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (menuLabel) menuLabel.textContent = open ? 'Sulje' : 'Valikko';
+    }
+
+    function setMenu(open) {
+        document.body.classList.toggle('is-menu-open', open);
+        syncMenuUI();
+    }
+
+    function closeMenu() {
+        if (document.body.classList.contains('is-menu-open')) setMenu(false);
     }
 
     // Näkyykö pelaajan törmäyslaatikon ympärillä esteitä? -> varoitus.
@@ -901,30 +928,48 @@
             260,
             WIDTH
         );
-        let availableHeight = Math.max(100, window.innerHeight - chromeHeight);
-        if (!playMode && compact) {
-            availableHeight = Math.max(availableHeight, Math.round(window.innerHeight * 0.6));
-        }
+        const availableHeight = Math.max(100, window.innerHeight - chromeHeight);
 
-        // Pelitilassa canvas täyttää ruudun: CSS skaalaa sen (object-fit: cover)
-        // ja hahmon kohta jää näkyviin. Siksi piirtotarkkuus mitoitetaan
-        // ruudun koon mukaan eikä canvasin näkyvän laatikon mukaan.
-        const scale = playMode
-            ? Math.max(availableWidth / WIDTH, availableHeight / HEIGHT)
-            : Math.min(availableWidth / WIDTH, availableHeight / HEIGHT, 1);
+        // Kuinka paljon maailmaa näytetään.
+        //
+        // Työpöydällä maailma näytetään kokonaisuudessaan: 960 px leveä alue
+        // sovitetaan ruutuun.
+        //
+        // Puhelimessa näytetään vain se osa maailmaa, johon ruutu riittää.
+        // Muuten kuvasuhteesta tulisi hyvin leveä (esim. 960x180 = 5,4:1) ja
+        // koko peli piirtyisi hyvin pienenä. Kun näkyvä alue on lähempänä
+        // ruudun muotoa, sekä hahmo että esteet ovat selvästi suurempia.
+        const fitScale = Math.min(availableWidth / WIDTH, availableHeight / HEIGHT, 1);
+        const zoomedWidth = compact
+            ? clamp(Math.round(availableWidth / fitScale), 520, WIDTH)
+            : WIDTH;
 
-        height = Math.round(HEIGHT * scale);
+        width = zoomedWidth;
+        height = Math.round((zoomedWidth * HEIGHT) / WIDTH);
         groundY = Math.round((GROUND_Y * height) / HEIGHT);
 
         // Tarkka piirtotarkkuus myös puhelimessa. Puhelimella raja on hieman
-        // pienempi, jotta piirtäminen pysyy sulavana (~2,5 M pikseliä/kehys).
+        // pienempi, jotta piirtäminen pysyy sulavana.
         dpr = Math.min(window.devicePixelRatio || 1, compact ? 1.75 : 2);
 
-        // Canvaksen ulkoasu tulee CSS:stä (mukaan lukien pelitilan koko ruudun
-        // sovitus), jotta inline-tyylit eivät kumoa sitä.
+        // Piirtopuskuri vastaa suoraan pelin loogista kokoa kerrottuna
+        // laitepikselisuhteella. Skaalausta EI saa sotkea tähän: muuten
+        // puskuriin jäisi piirtämätön alue ja ruudulle ilmestyisi musta
+        // kaistale. CSS huolehtii siitä, miten puskuri sovitetaan ruutuun.
         canvas.width = Math.round(width * dpr);
         canvas.height = Math.round(height * dpr);
-        ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
+
+        // Näyttökorkeus pelin omista mitoista: selain päättelee `height: auto`
+        // -tilassa kuvasuhteen `height`-attribuutista eli puskurin koosta,
+        // jolloin peli kutistuisi kapeaksi kaistaleeksi. Leveys otetaan
+        // pelialueesta — ei canvaksesta itsestään, koska se riippuisi
+        // korkeudesta ja syntyisi noidankehä.
+        const boxWidth = canvas.parentElement ? canvas.parentElement.clientWidth : availableWidth;
+        const displayWidth = boxWidth > 0 ? boxWidth : availableWidth;
+        canvas.style.aspectRatio = width + ' / ' + height;
+        canvas.style.height = Math.round(displayWidth / (width / height)) + 'px';
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         // Pidetään hahmo ja esteet uudella maanpinnalla.
         player.y = clamp(player.y, 0, groundY - player.h);
@@ -2631,11 +2676,22 @@
             restart();
         });
     }
+    if (menuBtn) {
+        menuBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            setMenu(!document.body.classList.contains('is-menu-open'));
+        });
+    }
+    // Esc sulkee valikon myös puhelimessa (ulkoinen näppäimistö).
+    window.addEventListener('keydown', (event) => {
+        if (event.code === 'Escape') closeMenu();
+    });
 
     resize();
     reset();
     syncCharacterUI();
     syncSoundUI();
     syncRotateTip();
+    syncMenuUI();
     requestAnimationFrame(frame);
 })();
