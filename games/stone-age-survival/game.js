@@ -1666,7 +1666,8 @@
                 [392, 311, 247, 165].forEach((f) => tone({ from: f, to: f * 0.6, duration: 0.4, gain: 0.13, type: 'sawtooth' }));
             },
             pickup() { tone({ from: 620, to: 940, duration: 0.14, gain: 0.09, type: 'triangle' }); },
-            coin() { tone({ from: 1100, to: 1400, duration: 0.1, gain: 0.08, type: 'triangle' }); }
+            coin() { tone({ from: 1100, to: 1400, duration: 0.1, gain: 0.08, type: 'triangle' }); },
+            click() { tone({ from: 720, to: 980, duration: 0.05, gain: 0.05, type: 'square' }); }
         };
     })();
 
