@@ -1,0 +1,408 @@
+/* ============================================================
+   TET Arcade — tyylit
+   Tummansininen arcade-ilme, ei riippuvuuksia.
+   ============================================================ */
+
+:root {
+    --bg: #070a13;
+    --bg-soft: #0d1322;
+    --panel: rgba(20, 28, 46, 0.72);
+    --panel-solid: #141c2e;
+    --line: rgba(255, 255, 255, 0.10);
+    --line-strong: rgba(255, 255, 255, 0.18);
+
+    --text: #eaf0fb;
+    --text-dim: #97a4be;
+
+    --violet: #8b5cf6;
+    --violet-soft: rgba(139, 92, 246, 0.20);
+    --cyan: #63b3ed;
+    --gold: #f5b544;
+
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    --ease: cubic-bezier(0.22, 0.68, 0.28, 1);
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* ---------- Taustan hehku ja ruudukko ---------- */
+
+.bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.bg__glow {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.55;
+}
+
+.bg__glow--one {
+    top: -18vmax;
+    left: -10vmax;
+    width: 58vmax;
+    height: 58vmax;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.55), transparent 68%);
+    animation: drift 26s var(--ease) infinite alternate;
+}
+
+.bg__glow--two {
+    top: 18vmax;
+    right: -16vmax;
+    width: 52vmax;
+    height: 52vmax;
+    background: radial-gradient(circle, rgba(99, 179, 237, 0.42), transparent 68%);
+    animation: drift 32s var(--ease) infinite alternate-reverse;
+}
+
+/* Hienovarainen ruudukko antaa arcade-tunnelman. */
+.bg__grid {
+    position: absolute;
+    inset: 0;
+    display: block;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 25%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 25%, transparent 78%);
+}
+
+@keyframes drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(4vmax, 3vmax, 0) scale(1.12); }
+}
+
+/* ---------- Asettelu ---------- */
+
+.wrap {
+    position: relative;
+    z-index: 1;
+    width: min(1140px, 100% - 2.5rem);
+    margin-inline: auto;
+}
+
+.hero {
+    position: relative;
+    z-index: 1;
+    padding: clamp(3rem, 9vw, 6.5rem) 0 clamp(1.5rem, 4vw, 3rem);
+    text-align: center;
+}
+
+.hero__kicker {
+    margin: 0 0 0.9rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.hero__title {
+    margin: 0 0 1.1rem;
+    font-size: clamp(2.6rem, 9vw, 5rem);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+}
+
+.hero__tet {
+    background: linear-gradient(120deg, #ffffff 10%, var(--cyan) 55%, var(--violet) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero__arcade {
+    display: inline-block;
+    margin-left: 0.28em;
+    background: linear-gradient(120deg, var(--gold) 5%, #ff8a5c 55%, #ff5c8a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero__lead {
+    max-width: 34rem;
+    margin: 0 auto;
+    color: var(--text-dim);
+    font-size: clamp(1rem, 2.4vw, 1.12rem);
+}
+
+.hero__lead strong { color: var(--text); font-weight: 600; }
+
+.hero__count {
+    margin: 1.4rem 0 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    min-height: 1.3em;
+}
+
+.main { padding-bottom: clamp(3rem, 7vw, 5rem); }
+
+.section-title {
+    margin: 0 0 1.4rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* ---------- Pelikortit ---------- */
+
+.games {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.card {
+    --accent: var(--cyan);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    animation: rise 0.5s var(--ease) both;
+}
+
+.card:hover,
+.card:focus-within {
+    transform: translateY(-5px);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Kansikuva: väriliukuväri pelin accent-väristä. */
+.card__art {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 8;
+    background:
+        radial-gradient(120% 90% at 12% 8%, color-mix(in srgb, var(--accent) 42%, transparent), transparent 62%),
+        linear-gradient(150deg, var(--panel-solid), #0a1020 72%);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+}
+
+/* Hienovarainen liukuväripalkki kannen yläreunassa. */
+.card__art::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.9;
+}
+
+.card__glyph {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(2.2rem, 7vw, 3rem);
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #fff;
+    text-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+    opacity: 0.95;
+}
+
+/* Alaviivat, kuten juoksuradan maa. */
+.card__lines {
+    position: absolute;
+    inset: auto 0 0;
+    height: 42%;
+    background-image: repeating-linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--accent) 55%, transparent) 0 22px,
+        transparent 22px 54px
+    );
+    mask-image: linear-gradient(transparent, #000 82%);
+    -webkit-mask-image: linear-gradient(transparent, #000 82%);
+    opacity: 0.5;
+}
+
+.card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: clamp(1.1rem, 3vw, 1.5rem);
+}
+
+.card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.card__title {
+    margin: 0;
+    font-size: clamp(1.25rem, 3.4vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.card__tagline {
+    margin: 0;
+    font-size: 0.86rem;
+    color: color-mix(in srgb, var(--accent) 78%, #ffffff);
+}
+
+.card__text {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+}
+
+.card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.15rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.card__tags li {
+    padding: 0.22rem 0.6rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+}
+
+.card__actions { margin-top: auto; padding-top: 0.4rem; }
+
+.play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 1.4rem;
+    font: inherit;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #08101f;
+    text-decoration: none;
+    background: linear-gradient(120deg, #ffffff, color-mix(in srgb, var(--accent) 70%, #ffffff));
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: transform 0.2s var(--ease), filter 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.play:hover,
+.play:focus-visible {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 38%, transparent);
+}
+
+.play:active { transform: translateY(0); }
+
+.play__arrow { transition: transform 0.2s var(--ease); }
+.play:hover .play__arrow { transform: translateX(4px); }
+
+/* ---------- Tilaviestit ---------- */
+
+.state {
+    margin: 0;
+    padding: 1.4rem 1.6rem;
+    color: var(--text-dim);
+    background: var(--panel);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius);
+}
+
+.state--error { color: #ffb4a8; border-color: rgba(255, 120, 100, 0.45); }
+
+/* ---------- Alatunniste ---------- */
+
+.footer {
+    position: relative;
+    z-index: 1;
+    padding: 1.6rem 0 2.2rem;
+    border-top: 1px solid var(--line);
+}
+
+.footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.footer__dot { opacity: 0.5; }
+
+/* ---------- Puhelin ---------- */
+
+@media (max-width: 640px) {
+    .wrap { width: min(1140px, 100% - 1.75rem); }
+    .games { grid-template-columns: 1fr; }
+    .hero { padding-top: 2.6rem; }
+    .card__body { gap: 0.6rem; }
+}
+
+@media (max-width: 380px) {
+    .card__glyph { font-size: 1.9rem; }
+}
+
+/* Isot kosketuskohteet puhelimessa. */
+@media (hover: none) and (pointer: coarse) {
+    .play { min-height: 54px; }
+}
+
+/* Kunnioitetaan käyttäjän liikkeen vähennystä. */
+@media (prefers-reduced-motion: reduce) {
+    .bg__glow { animation: none; }
+    .card { animation: none; }
+    .card:hover, .card:focus-within { transform: none; }
+    .play:hover, .play:focus-visible { transform: none; }
+}

@@ -1,0 +1,14 @@
+{
+  "games": [
+    {
+      "id": "endless-runner",
+      "title": "Endless Runner",
+      "tagline": "Juokse niin pitkälle kuin pystyt",
+      "description": "Väistä esteitä, hyppää rotkojen yli ja kiipeä kerroksille. Kerää kolikoita ja riko ennätyksesi — vauhti kasvaa koko ajan.",
+      "path": "games/endless-runner/",
+      "tags": ["Juoksupeli", "Kolikot", "Kerrokset", "Puhelin"],
+      "accent": "#63b3ed",
+      "featured": true
+    }
+  ]
+}

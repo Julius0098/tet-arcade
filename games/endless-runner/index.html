@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <!-- Puhelin: ei zoomia, ei kaksoisnapautuszoomoa, sivun leveys laitteen mukaan -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0e1420">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Endless Runner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Paluulinkki arcade-etusivulle. -->
+    <a class="backlink" href="../../index.html">← Takaisin TET Arcadeen</a>
+
+    <div class="layout">
+        <aside class="panel" id="panel">
+            <h2 class="panel__title">Hahmo</h2>
+            <p class="panel__lead">Valitse hahmo, jolla juokset.</p>
+
+            <!-- Hahmovalitsin: napit rakennetaan game.js:ssä hahmomäärittelystä. -->
+            <div class="picker" id="picker" role="radiogroup" aria-label="Hahmon valinta"></div>
+            <p class="picker__hint" id="pickerHint">Vaihda myös vasemmalla ja oikealla nuolinäppäimellä.</p>
+
+            <section class="block">
+                <h3 class="block__title">Ohjaimet</h3>
+                <div class="controls">
+                    <div class="controls__row">
+                        <span class="controls__keys"><kbd>Space</kbd><kbd>↑</kbd></span>
+                        <span>Hyppy</span>
+                    </div>
+                    <div class="controls__row">
+                        <span class="controls__keys"><kbd>Enter</kbd><kbd>R</kbd></span>
+                        <span>Uusi peli</span>
+                    </div>
+                    <div class="controls__row">
+                        <span class="controls__keys"><kbd>←</kbd><kbd>→</kbd></span>
+                        <span>Vaihda hahmoa</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="game-column">
+            <header class="topbar">
+                <h1 class="topbar__title">Endless Runner</h1>
+                <span class="topbar__tag">Juokse niin pitkälle kuin pystyt</span>
+                <button class="soundbtn" id="soundBtn" type="button" aria-pressed="false" title="Äänet päälle / pois">
+                    <span class="soundbtn__icon" id="soundIcon" aria-hidden="true">🔊</span>
+                    <span class="soundbtn__label" id="soundLabel">Äänet</span>
+                </button>
+            </header>
+
+            <div class="stage">
+                <canvas id="game" width="960" height="360" aria-label="Endless Runner -peli"></canvas>
+                <p class="touchhint" aria-hidden="true">Napauta hypätäksesi</p>
+
+                <div class="hud">
+                    <div class="hud__score">
+                        <span class="hud__label">Pisteet</span>
+                        <span id="score">0</span>
+                        <span class="hud__coins" title="Kolikot">
+                            <span class="hud__coin" aria-hidden="true"></span>
+                            <span id="coins">0</span>
+                        </span>
+                    </div>
+                    <div class="hud__best" id="best" hidden>Ennätys <span id="bestScore">0</span></div>
+                </div>
+
+                <div class="overlay" id="overlay" hidden>
+                    <div class="overlay__panel">
+                        <p class="overlay__title" id="overlayTitle">Peli loppui</p>
+                        <p class="overlay__score" id="overlayScore">Pisteet 0</p>
+                        <p class="overlay__note" id="overlayNote" hidden></p>
+                        <p class="overlay__hint">Aloita uusi peli painamalla <kbd>Enter</kbd>, <kbd>Space</kbd> tai klikkaamalla</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="levelbar">
+                <span class="levelbar__badge">Level <span id="level">1</span><span class="levelbar__max">/100</span></span>
+                <div class="levelbar__track" role="progressbar" aria-label="Edistyminen seuraavalle levelille">
+                    <div class="levelbar__fill" id="levelFill"></div>
+                </div>
+                <span class="levelbar__note">Uusi ennätys = uusi level</span>
+            </div>
+        </main>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

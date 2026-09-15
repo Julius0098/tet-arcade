@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0e1a">
+    <meta name="description" content="TET Arcade — kokoelma selaimessa pelattavia pikkupelejä.">
+    <title>TET Arcade</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg" aria-hidden="true">
+        <span class="bg__glow bg__glow--one"></span>
+        <span class="bg__glow bg__glow--two"></span>
+        <span class="bg__grid"></span>
+    </div>
+
+    <header class="hero">
+        <div class="wrap">
+            <p class="hero__kicker">Selaimessa pelattava pelikokoelma</p>
+            <h1 class="hero__title">
+                <span class="hero__tet">TET</span><span class="hero__arcade">Arcade</span>
+            </h1>
+            <p class="hero__lead">
+                Pikkupelejä, joita voi pelata heti — ei asennuksia, ei latauksia.
+                Valitse peli ja paina <strong>Pelaa</strong>.
+            </p>
+            <p class="hero__count" id="gameCount" aria-live="polite"></p>
+        </div>
+    </header>
+
+    <main class="wrap main">
+        <h2 class="section-title">Pelit</h2>
+
+        <!-- Pelikortit rakennetaan app.js:ssä games.json-tiedostosta. -->
+        <ul class="games" id="games" aria-label="Pelivalikoima"></ul>
+
+        <p class="state" id="state" hidden></p>
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer__inner">
+            <span>TET Arcade</span>
+            <span class="footer__dot" aria-hidden="true">&bull;</span>
+            <span>HTML + CSS + vanilla JavaScript</span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
