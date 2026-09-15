@@ -12,6 +12,18 @@
       "tags": ["Kolikot", "Rotkot", "Kerrokset", "Puhelin"],
       "accent": "#63b3ed",
       "featured": true
+    },
+    {
+      "id": "rolling-hero",
+      "title": "Rolling Hero",
+      "tagline": "Vieritä, hyppää ja voita viholliset",
+      "description": "Ohjaa pyöreää sankaria kymmenen kentän halki. Kerää kolikot, väistä piikit ja kuopat, kukista viholliset hyppäämällä niiden päälle ja ylitä maalilippu.",
+      "path": "games/rolling-hero/",
+      "scene": "rolling",
+      "kicker": "Tasohyppely",
+      "status": "Pelattavissa",
+      "tags": ["Kentät", "Checkpointit", "Viholliset", "Puhelin"],
+      "accent": "#8b7cf6"
     }
   ]
 }

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <!-- Puhelin: ei zoomia, sivun leveys laitteen mukaan, lovi huomioidaan -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0b1024">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="Rolling Hero — värikäs tasohyppely, jossa pyöreä sankari vierii kenttien halki.">
+    <title>Rolling Hero</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Paluulinkki arcade-valikkoon. -->
+    <a class="backlink" id="backLink" href="../../index.html">← Takaisin TET Arcadeen</a>
+
+    <div class="game">
+        <!-- Yläpalkki: kenttä, pisteet ja painikkeet -->
+        <header class="topbar">
+            <div class="topbar__left">
+                <span class="chip chip--level">Kenttä <strong id="hudLevel">1</strong><span class="chip__max">/10</span></span>
+                <span class="chip chip--lives" title="Elämät">
+                    <strong id="hudLives">3</strong>
+                    <span class="chip__label">elämää</span>
+                </span>
+            </div>
+
+            <div class="topbar__right">
+                <span class="chip chip--score" title="Pisteet"><strong id="hudScore">0</strong></span>
+                <span class="chip chip--coins" title="Kolikot">
+                    <span class="coin-dot" aria-hidden="true"></span>
+                    <strong id="hudCoins">0</strong>
+                </span>
+                <span class="chip chip--time" title="Aika"><strong id="hudTime">0:00</strong></span>
+                <button class="iconbtn" id="soundBtn" type="button" aria-pressed="false" title="Äänet päälle / pois">
+                    <span id="soundIcon" aria-hidden="true">🔊</span>
+                </button>
+                <button class="iconbtn" id="pauseBtn" type="button" title="Pause (P)">
+                    <span aria-hidden="true">⏸</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Pelialue -->
+        <div class="stage" id="stage">
+            <canvas id="game" width="960" height="540" aria-label="Rolling Hero -peli"></canvas>
+
+            <!-- Kosketusohjaimet: näytetään vain kosketuslaitteilla -->
+            <div class="touch" id="touch" aria-hidden="true">
+                <div class="touch__side">
+                    <button class="tbtn tbtn--dir" id="btnLeft" type="button" aria-label="Vasemmalle">◀</button>
+                    <button class="tbtn tbtn--dir" id="btnRight" type="button" aria-label="Oikealle">▶</button>
+                </div>
+                <div class="touch__side touch__side--right">
+                    <button class="tbtn tbtn--jump" id="btnJump" type="button" aria-label="Hyppy">⬆</button>
+                    <button class="tbtn tbtn--pause" id="btnPause" type="button" aria-label="Pause">⏸</button>
+                </div>
+            </div>
+
+            <!-- Vihje kentän alussa -->
+            <p class="hint" id="hint">Kieritä kolikot ja ylitä maali</p>
+        </div>
+    </div>
+
+    <!-- Pause-valikko -->
+    <div class="overlay" id="pauseOverlay" hidden>
+        <div class="overlay__panel">
+            <h2 class="overlay__title" id="pauseTitle">Tauko</h2>
+            <p class="overlay__sub" id="pauseSub">Kenttä 1</p>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnContinue" type="button">Jatka</button>
+                <button class="mbtn" id="btnRestart" type="button">Aloita kenttä alusta</button>
+                <button class="mbtn" id="btnSettings" type="button">Asetukset</button>
+                <button class="mbtn mbtn--ghost" id="btnBackToGames" type="button">Takaisin peleihin</button>
+            </div>
+
+            <!-- Asetukset -->
+            <div class="settings" id="settingsPanel" hidden>
+                <h3 class="settings__title">Asetukset</h3>
+                <label class="settings__row">
+                    <span>Äänet</span>
+                    <input type="checkbox" id="optSound" checked>
+                </label>
+                <label class="settings__row">
+                    <span>Näytä kosketusohjaimet</span>
+                    <input type="checkbox" id="optTouch">
+                </label>
+                <label class="settings__row settings__row--range">
+                    <span>Musiikin voimakkuus</span>
+                    <input type="range" id="optVolume" min="0" max="100" value="70">
+                </label>
+                <button class="mbtn mbtn--small" id="btnCloseSettings" type="button">Valmis</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kentän läpäisy -->
+    <div class="overlay" id="winOverlay" hidden>
+        <div class="overlay__panel">
+            <p class="overlay__badge" id="winBadge">Kenttä läpi!</p>
+            <h2 class="overlay__title" id="winTitle">Hienoa!</h2>
+
+            <ul class="results">
+                <li><span>Aika</span><strong id="winTime">0:00</strong></li>
+                <li><span>Kolikot</span><strong id="winCoins">0</strong></li>
+                <li><span>Kuolemat</span><strong id="winDeaths">0</strong></li>
+                <li><span>Pisteet</span><strong id="winScore">0</strong></li>
+            </ul>
+
+            <p class="overlay__note" id="winNote" hidden></p>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnNext" type="button">Seuraava kenttä</button>
+                <button class="mbtn" id="btnReplay" type="button">Pelaa uudelleen</button>
+                <button class="mbtn mbtn--ghost" id="btnWinBack" type="button">Takaisin peleihin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pelin läpäisy -->
+    <div class="overlay" id="finalOverlay" hidden>
+        <div class="overlay__panel">
+            <p class="overlay__badge overlay__badge--gold" id="finalBadge">Kaikki kentät läpi!</p>
+            <h2 class="overlay__title" id="finalTitle">Olet sankari!</h2>
+
+            <ul class="results">
+                <li><span>Kokonaisaika</span><strong id="finalTime">0:00</strong></li>
+                <li><span>Kolikot yhteensä</span><strong id="finalCoins">0</strong></li>
+                <li><span>Kuolemat yhteensä</span><strong id="finalDeaths">0</strong></li>
+                <li><span>Loppupisteet</span><strong id="finalScore">0</strong></li>
+            </ul>
+
+            <p class="overlay__note" id="finalNote" hidden></p>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnFinalReplay" type="button">Pelaa alusta</button>
+                <button class="mbtn mbtn--ghost" id="btnFinalBack" type="button">Takaisin peleihin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ohjeet ensimmäisellä kerralla -->
+    <div class="overlay" id="helpOverlay" hidden>
+        <div class="overlay__panel">
+            <h2 class="overlay__title">Rolling Hero</h2>
+            <p class="overlay__sub">Vieritä, hyppää ja kukista viholliset</p>
+
+            <ul class="help">
+                <li><span class="help__key">A</span><span class="help__key">←</span><span class="help__txt">Vasemmalle</span></li>
+                <li><span class="help__key">D</span><span class="help__key">→</span><span class="help__txt">Oikealle</span></li>
+                <li><span class="help__key">Space</span><span class="help__txt">Hyppy (myös kaksi kertaa)</span></li>
+                <li><span class="help__key">P</span><span class="help__key">Esc</span><span class="help__txt">Tauko</span></li>
+            </ul>
+
+            <p class="overlay__note">Puhelimessa käytössäsi on suuret kosketusnapit.</p>
+
+            <div class="menu">
+                <button class="mbtn mbtn--primary" id="btnStart" type="button">Aloita peli</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

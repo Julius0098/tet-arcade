@@ -163,6 +163,61 @@
                 + '</g>';
         },
 
+        // Rollaavan pallon tasohyppely: kukkulat, tasot, piikit ja kolikot.
+        rolling: function (id) {
+            return '<defs>'
+                + '<linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">'
+                + '<stop offset="0" stop-color="#101a44"/><stop offset="0.5" stop-color="#2b3a86"/>'
+                + '<stop offset="1" stop-color="#6d5bd0"/></linearGradient>'
+                + '<linearGradient id="' + id + '-hill" x1="0" y1="0" x2="0" y2="1">'
+                + '<stop offset="0" stop-color="#3f8a6a"/><stop offset="1" stop-color="#1d4a38"/></linearGradient>'
+                + '<linearGradient id="' + id + '-hill2" x1="0" y1="0" x2="0" y2="1">'
+                + '<stop offset="0" stop-color="#2c6f5c"/><stop offset="1" stop-color="#143229"/></linearGradient>'
+                + '<linearGradient id="' + id + '-ball" x1="0.2" y1="0" x2="0.8" y2="1">'
+                + '<stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="#1e3a8a"/></linearGradient>'
+                + '<linearGradient id="' + id + '-plat" x1="0" y1="0" x2="0" y2="1">'
+                + '<stop offset="0" stop-color="#7c6cf0"/><stop offset="1" stop-color="#3b2f8f"/></linearGradient>'
+                + '</defs>'
+                + '<rect width="320" height="140" fill="url(#' + id + ')"/>'
+                // Kaukana olevat kukkulat
+                + '<path d="M0 104 Q48 52 104 96 Q146 60 196 100 Q246 56 320 102 L320 140 L0 140 Z" fill="url(#' + id + '-hill2)" opacity="0.75"/>'
+                // Lähemmät kukkulat
+                + '<path d="M0 122 Q60 84 124 120 Q182 88 246 122 Q286 104 320 122 L320 140 L0 140 Z" fill="url(#' + id + '-hill)"/>'
+                + '<rect y="122" width="320" height="18" fill="#1a4030"/>'
+                + '<rect y="121" width="320" height="2.5" fill="#7fe3a8" opacity="0.6"/>'
+                // Tasot
+                + '<rect x="176" y="86" width="64" height="11" rx="4" fill="url(#' + id + '-plat)"/>'
+                + '<rect x="176" y="84" width="64" height="3" rx="1.5" fill="#cfc6ff" opacity="0.85"/>'
+                + '<rect x="258" y="60" width="48" height="11" rx="4" fill="url(#' + id + '-plat)"/>'
+                + '<rect x="258" y="58" width="48" height="3" rx="1.5" fill="#cfc6ff" opacity="0.85"/>'
+                // Piikit
+                + '<g fill="#94a3d8">'
+                + '<path d="M118 122 L125 104 L132 122 Z"/>'
+                + '<path d="M132 122 L139 104 L146 122 Z"/>'
+                + '</g>'
+                // Kolikot
+                + '<g fill="#ffd45e" stroke="#8a5a12" stroke-width="1.5">'
+                + '<circle cx="192" cy="72" r="6"/>'
+                + '<circle cx="208" cy="72" r="6"/>'
+                + '<circle cx="224" cy="72" r="6"/>'
+                + '</g>'
+                + '<g fill="#fff3cd">'
+                + '<circle cx="190" cy="70" r="1.7"/><circle cx="206" cy="70" r="1.7"/><circle cx="222" cy="70" r="1.7"/>'
+                + '</g>'
+                // Vihollinen
+                + '<g transform="translate(252 107)">'
+                + '<rect x="0" y="0" width="20" height="13" rx="5" fill="#e5484d"/>'
+                + '<circle cx="6" cy="5" r="2.4" fill="#2a0a0c"/><circle cx="14" cy="5" r="2.4" fill="#2a0c0e"/>'
+                + '</g>'
+                // Sankari: pyöreä hahmo, joka vieriä
+                + '<g transform="translate(44 96)">'
+                + '<circle cx="0" cy="0" r="18" fill="url(#' + id + '-ball)"/>'
+                + '<path d="M-16 -6 A18 18 0 0 1 2 -17" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.75"/>'
+                + '<circle cx="-6" cy="-3" r="3.4" fill="#ffffff" opacity="0.9"/>'
+                + '<circle cx="7" cy="4" r="2.2" fill="#ffffff" opacity="0.45"/>'
+                + '</g>';
+        },
+
         // Yleinen arcade-maisema: pelihalli ja neonvalot.
         arcade: function (id) {
             var lights = '';
