@@ -221,9 +221,6 @@
     const soundBtn = document.getElementById('soundBtn');
     const soundIcon = document.getElementById('soundIcon');
     const soundLabel = document.getElementById('soundLabel');
-    const fsBtn = document.getElementById('fsBtn');
-    const fsIcon = document.getElementById('fsIcon');
-    const fsLabel = document.getElementById('fsLabel');
     const overlayBtn = document.getElementById('overlayBtn');
     const overlayHint = document.getElementById('overlayHint');
     const rotateTip = document.getElementById('rotateTip');
@@ -798,10 +795,6 @@
         return window.innerWidth <= 900;
     }
 
-    function fullscreenActive() {
-        return Boolean(document.fullscreenElement || document.webkitFullscreenElement);
-    }
-
     // Päivittää pelitila-luokan: valikot piiloon vain pelin aikana.
     // Luokka asetetaan vain pienille näytöille, jotta työpöydän asettelu
     // säilyy ennallaan. JS hoitaa rajauksen, koska resize() lukee saman
@@ -817,40 +810,6 @@
         resize();                               // peli saa koko ruudun korkeuden
     }
 
-    function syncFullscreenUI() {
-        const on = fullscreenActive();
-        document.body.classList.toggle('is-fullscreen', on);
-        if (fsBtn) fsBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-        if (fsIcon) fsIcon.textContent = on ? '⤡' : '⛶';
-        if (fsLabel) fsLabel.textContent = on ? 'Poistu' : 'Koko ruutu';
-        // Selaimen palkkien piiloutuminen muuttaa kokoa.
-        setTimeout(resize, 120);
-    }
-
-    // Pyydetään koko ruutua vain käyttäjän eleestä (selaimet vaativat sen).
-    function requestFullscreen() {
-        const el = document.documentElement;
-        const request = el.requestFullscreen || el.webkitRequestFullscreen;
-        if (!request || fullscreenActive()) return;
-        try {
-            const result = request.call(el);
-            if (result && typeof result.catch === 'function') result.catch(() => {});
-        } catch (err) {
-            /* ei tuettu tai estetty – peli toimii ilmankin */
-        }
-    }
-
-    function exitFullscreen() {
-        const exit = document.exitFullscreen || document.webkitExitFullscreen;
-        if (!exit || !fullscreenActive()) return;
-        try {
-            const result = exit.call(document);
-            if (result && typeof result.catch === 'function') result.catch(() => {});
-        } catch (err) {
-            /* ei tuettu */
-        }
-    }
-
     // Pyydetään vaakatasoa, jotta vaakasuuntainen peli näkyy kunnolla.
     // Selain voi evätä pyynnön (esim. työpöydällä), jolloin peli toimii
     // pystyssäkin ja kääntökehotus opastaa pelaajaa.
@@ -863,11 +822,6 @@
         } catch (err) {
             /* ei tuettu tai estetty */
         }
-    }
-
-    function toggleFullscreen() {
-        if (fullscreenActive()) exitFullscreen();
-        else requestFullscreen();
     }
 
     // Pystysuunnassa olevalle puhelimelle kehotetaan kääntämään laite, koska
@@ -934,8 +888,7 @@
 
         // Pelitilassa (puhelin) valikot on piilotettu, joten koko ruutu on pelin
         // käytössä: ei marginaaleja eikä yläpalkin varausta.
-        const playMode = document.body.classList.contains('is-playing')
-            || document.body.classList.contains('is-fullscreen');
+        const playMode = document.body.classList.contains('is-playing');
 
         const sideMargin = playMode ? 0 : (compact ? 22 : 48);
         // Otsikko, HUD ja level-palkki vievät tilaa. Puhelimessa ne ovat
@@ -1149,12 +1102,6 @@
             overlayHint.textContent = isSmallScreen()
                 ? 'Napauta peliä tai paina nappia aloittaaksesi uuden pelin.'
                 : 'Aloita uusi peli painamalla Enter, Space tai klikkaamalla';
-        }
-
-        // Peliruudulta poistutaan, jotta lopputulos ja valikot näkyvät.
-        if (fullscreenEntered) {
-            fullscreenEntered = false;
-            exitFullscreen();
         }
 
         if (overlayNote) {
@@ -2573,29 +2520,23 @@
 
     /* ---------- Syöte ---------- */
 
-    // Puhelimella peli avataan koko ruudulle heti kun se alkaa, jotta
-    // pelialueesta saadaan mahdollisimman paljon irti. Kutsu tapahtuu aina
-    // käyttäjän eleestä (napautus tai näppäin), kuten selaimet vaativat.
-    let fullscreenEntered = false;
-
-    function startRunWithFullscreen() {
-        if (state === 'ready' && isSmallScreen() && !fullscreenActive()) {
-            fullscreenEntered = true;
-            requestFullscreen();
-            lockLandscape();            // vaakasuuntainen peli: pyydetään vaakatasoa
-        }
+    // Puhelimella peli pyytää vaakatasoa heti alkaessaan, jotta vaakasuuntainen
+    // peli näkyy mahdollisimman isona. Kutsu tapahtuu käyttäjän eleestä
+    // (napautus tai näppäin), kuten selaimet vaativat.
+    function startRunOnPhone() {
+        if (state === 'ready' && isSmallScreen()) lockLandscape();
         startRun();
     }
 
     function jumpOrRestart() {
-        if (state === 'ready') startRunWithFullscreen();
+        if (state === 'ready') startRunOnPhone();
         else if (state === 'running') jumpBuffer = JUMP_BUFFER;
         else if (state === 'over') restart();
     }
 
     // Enter: aloittaa pelin, ja loppuruudusta uuden pelin.
     function enterPressed() {
-        if (state === 'ready') startRunWithFullscreen();
+        if (state === 'ready') startRunOnPhone();
         else if (state === 'over') restart();
     }
 
@@ -2615,10 +2556,6 @@
         } else if (event.code === 'KeyR') {
             event.preventDefault();
             restart();
-        } else if (event.code === 'KeyF') {
-            // Koko ruudun tila päälle / pois.
-            event.preventDefault();
-            if (!event.repeat) toggleFullscreen();
         } else if (event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
             // Nuolilla vaihdetaan hahmoa aloitus- ja loppuruudussa.
             if (state === 'ready' || state === 'over') {
@@ -2661,10 +2598,9 @@
         holdingJump = false;
     });
 
-    // Kääntö: päivitetään koko ruudun tila ja kääntökehotus.
+    // Kääntö: päivitetään kääntökehotus.
     window.addEventListener('orientationchange', () => {
         syncRotateTip();
-        syncFullscreenUI();
     });
 
     // Puhelimen kääntö ja selaimen palkkien piiloutuminen muuttavat kokoa.
@@ -2688,9 +2624,6 @@
             syncSoundUI();
         });
     }
-    if (fsBtn) {
-        fsBtn.addEventListener('click', toggleFullscreen);
-    }
     if (overlayBtn) {
         overlayBtn.addEventListener('click', (event) => {
             event.stopPropagation();            // ei laukaise canvasin napautusta
@@ -2699,15 +2632,10 @@
         });
     }
 
-    // Selaimen oma koko ruudun tila (esim. Esc) pidetään synkassa.
-    document.addEventListener('fullscreenchange', syncFullscreenUI);
-    document.addEventListener('webkitfullscreenchange', syncFullscreenUI);
-
     resize();
     reset();
     syncCharacterUI();
     syncSoundUI();
-    syncFullscreenUI();
     syncRotateTip();
     requestAnimationFrame(frame);
 })();
